@@ -20,8 +20,6 @@
 
 package org.sonar.plugins.buildbreaker;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.BuildBreaker;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.config.Settings;
@@ -30,12 +28,14 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasuresFilters;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.Project;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import java.util.Collection;
 
 public class AlertBreaker extends BuildBreaker {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AlertBreaker.class);
+  private static final Logger LOG = Loggers.get(ForbiddenConfigurationBreaker.class);
 
   private final Settings settings;
 
@@ -47,7 +47,7 @@ public class AlertBreaker extends BuildBreaker {
     if (settings.getBoolean(BuildBreakerPlugin.SKIP_KEY)) {
       LOG.debug("BuildBreaker disabled on project " + project);
     } else {
-      analyseMeasures(context, LoggerFactory.getLogger(getClass()));
+      analyseMeasures(context, Loggers.get(getClass()));
     }
   }
 

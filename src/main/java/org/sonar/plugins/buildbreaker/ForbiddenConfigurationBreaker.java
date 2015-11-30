@@ -19,17 +19,16 @@
  */
 package org.sonar.plugins.buildbreaker;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.BuildBreaker;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class ForbiddenConfigurationBreaker extends BuildBreaker {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ForbiddenConfigurationBreaker.class);
+  private static final Logger LOG = Loggers.get(ForbiddenConfigurationBreaker.class);
 
   private final Settings settings;
 
@@ -40,12 +39,41 @@ public class ForbiddenConfigurationBreaker extends BuildBreaker {
   public void executeOn(Project project, SensorContext context) {
     String[] pairs = settings.getStringArray(BuildBreakerPlugin.FORBIDDEN_CONF_KEY);
     for (String pair : pairs) {
-      String key = StringUtils.substringBefore(pair, "=");
-      String value = StringUtils.substringAfter(pair, "=");
-      if (StringUtils.equals(value, settings.getString(key))) {
+      String key = substringBefore(pair, "=");
+      String value = substringAfter(pair, "=");
+      if (equals(value, settings.getString(key))) {
         LOG.error(BuildBreakerPlugin.BUILD_BREAKER_LOG_STAMP + "Forbidden configuration: " + pair);
         fail("A forbidden configuration has been found on the project: " + pair);
       }
+    }
+  }
+
+  boolean isEmpty(String str) {
+    return str == null || str.length() == 0;
+  }
+  boolean equals(String str1, String str2) {
+    return str1 == null?str2 == null:str1.equals(str2);
+  }
+  String substringBefore(String str, String separator) {
+    if(!isEmpty(str) && separator != null) {
+      if(separator.length() == 0) {
+        return "";
+      } else {
+        int pos = str.indexOf(separator);
+        return pos == -1?str:str.substring(0, pos);
+      }
+    } else {
+      return str;
+    }
+  }
+  String substringAfter(String str, String separator) {
+    if(isEmpty(str)) {
+      return str;
+    } else if(separator == null) {
+      return "";
+    } else {
+      int pos = str.indexOf(separator);
+      return pos == -1?"":str.substring(pos + separator.length());
     }
   }
 }

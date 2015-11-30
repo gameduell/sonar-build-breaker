@@ -21,7 +21,6 @@
 package org.sonar.plugins.buildbreaker;
 
 import org.junit.Test;
-import org.slf4j.Logger;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.config.Settings;
 import org.sonar.api.measures.CoreMetrics;
@@ -29,16 +28,14 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasuresFilter;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.utils.SonarException;
+import org.sonar.api.utils.log.Logger;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AlertBreakerTest {
 
